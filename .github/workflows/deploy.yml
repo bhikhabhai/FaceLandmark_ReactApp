@@ -20,13 +20,11 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          cd FaceMesh
           npm install
           npm install @mediapipe/face_mesh device-detector-js
 
       - name: Build Project
         run: |
-          cd FaceMesh
           npm run build
 
       - name: Upload artifact to enable deployment
