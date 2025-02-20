@@ -33,7 +33,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: production file  # Fixed name
-          path: ./FaceMesh/dist    # Ensure build output goes here
+          path: ./dist    # Ensure build output goes here
 
   deploy:
     needs: build
@@ -43,10 +43,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: production file  # Fixed name
-          path: ./FaceMesh/dist  
+          path: ./dist  
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GH_PAGES_TOKEN }}  # Corrected token
-          publish_dir: ./FaceMesh/dist  
+          publish_dir: ./dist  
