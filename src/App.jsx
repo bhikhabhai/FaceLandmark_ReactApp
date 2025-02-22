@@ -15,17 +15,18 @@ const FaceMeshApp = () => {
       });
 
       newFaceMesh.setOptions({
-        selfieMode: true,
+        selfieMode: false,
         enableFaceGeometry: false,
         maxNumFaces: 1,
         refineLandmarks: true, // More accurate landmarks
-        minDetectionConfidence: 0.5,
-        minTrackingConfidence: 0.5,
+        minDetectionConfidence: 0.7,
+        minTrackingConfidence: 0.7,
       });
 
       setFaceMesh(newFaceMesh);
 
       newFaceMesh.onResults((results) => {
+        document.querySelector(".input_video").addEventListener("loadeddata", adjustCanvasSize);
         const canvas = canvasRef.current;
         const ctx = canvas.getContext("2d");
 
@@ -78,7 +79,6 @@ const FaceMeshApp = () => {
     const file = event.target.files[0];
     if (!file) return;
   
-    //Reset before loading new image
     resetWebsiteData();
   
     const reader = new FileReader();
@@ -89,21 +89,42 @@ const FaceMeshApp = () => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext("2d");
   
-        // Dynamically set canvas size to match image dimensions
-        canvas.width = img.width;
-        canvas.height = img.height;
+        // Set canvas dimensions based on image aspect ratio
+        const maxWidth = 650;
+        const maxHeight = 500;
+        let width = img.width;
+        let height = img.height;
   
-        // Draw uploaded image
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        // Calculate new dimensions while maintaining aspect ratio
+        if (width > maxWidth || height > maxHeight) {
+          const ratio = Math.min(maxWidth / width, maxHeight / height);
+          width *= ratio;
+          height *= ratio;
+        }
   
-        //Ensure FaceMesh exists before processing
+        // Set canvas dimensions
+        canvas.width = width;
+        canvas.height = height;
+  
+        // Clear previous content and draw new image
+        ctx.clearRect(0, 0, width, height);
+        ctx.drawImage(img, 0, 0, width, height);
+  
         if (!faceMesh) {
           console.error("FaceMesh not initialized yet!");
           return;
         }
   
         try {
-          await faceMesh.send({ image: img }); // Process new image
+          // Create a temporary canvas for processing
+          const tempCanvas = document.createElement('canvas');
+          tempCanvas.width = width;
+          tempCanvas.height = height;
+          const tempCtx = tempCanvas.getContext('2d');
+          tempCtx.drawImage(img, 0, 0, width, height);
+          
+          // Process the image with FaceMesh
+          await faceMesh.send({ image: tempCanvas });
         } catch (error) {
           console.error("Error processing image with FaceMesh:", error);
         }
@@ -113,17 +134,16 @@ const FaceMeshApp = () => {
     reader.readAsDataURL(file);
   };
   
+  // Update resetWebsiteData function
   const resetWebsiteData = () => {
-    // 1️ Clear the Canvas
     const canvas = canvasRef.current;
     if (canvas) {
       const ctx = canvas.getContext("2d");
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      canvas.width = 640; // Reset to default width
-      canvas.height = 480; // Reset to default height
+      canvas.width = 650;  // Match with CSS max-width
+      canvas.height = 500; // Match with CSS height
     }
   
-    // 2️ Stop the Camera Stream (if active)
     if (videoRef.current && videoRef.current.srcObject) {
       let tracks = videoRef.current.srcObject.getTracks();
       tracks.forEach((track) => track.stop());
@@ -131,6 +151,15 @@ const FaceMeshApp = () => {
     }
   };
   
+  const adjustCanvasSize = () => {
+    const video = document.querySelector(".input_video");
+    const canvas = document.querySelector(".output_canvas");
+
+    if (video && canvas) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+    }
+};
 
   return (
     <div>
@@ -149,7 +178,9 @@ const FaceMeshApp = () => {
 
       <div className="container">
         {useCamera ? (
-          <video className="input_video" ref={videoRef} autoPlay muted></video>
+          <div className="input_video">
+            <video ref={videoRef} autoPlay muted></video>
+          </div>
         ) : (
           <input
             type="file"
@@ -159,8 +190,9 @@ const FaceMeshApp = () => {
           />
 
         )}
-
-        <div className="canvas-container">
+    &nbsp;
+    &nbsp;
+        <div>
           <canvas className="output_canvas" ref={canvasRef}></canvas>
         </div>
       </div>

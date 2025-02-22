@@ -13,50 +13,47 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh; 
+  overflow-y: auto;
 }
+
 
 /* Main Container */
 .container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  width: 90%;
-  max-width: 1200px;
+  width: 100%;
   height: 100%;
-  padding: 10px;
+  max-width: 1300px;
+  padding: 20px;
   background-color: #34495e;
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-/* Video & Canvas Styling */
-.input_video {
-  width: 100%;
-  max-width: 640px;
-  height: auto;
-  display: block;
-  border-radius: 10px;
+  overflow-y: auto;  
+  margin-top: 10px;
   margin-bottom: 10px;
 }
 
-.canvas-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* Video & Canvas Styling */
+.input_video video {
   width: 100%;
-  max-width: 640px;
-  height: auto;
-  margin-top: 10px;
+  max-width: 650px;
+  height: 500px;
+  display: block;
+  margin-bottom:10px;
+  margin-top:10px;
 }
 
 .output_canvas {
   width: 100%;
-  max-width: 640px;
-  height: auto;
-  border-radius: 10px;
+  max-width: 650px;
+  height: 470px;
+  display: block;
+  margin-bottom:10px;
+  margin-top:10px;
+
 }
 
 /* Toggle & Upload Button */
@@ -118,8 +115,9 @@ body {
 /* Responsive Design */
 @media screen and (max-width: 768px) {
   .container {
-    width: 95%;
-    padding: 5px;
+    flex-grow: 1;
+    max-height: 90vh;
+    overflow-y: auto;
   }
 
   .toggle-btn,
@@ -143,5 +141,88 @@ body {
   .spinner {
     width: 60px;
     height: 60px;
+  }
+}
+
+/* ... existing code ... */
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    padding: 15px;
+    margin-top: 80px;
+    max-height: none;
+    height: auto;
+  }
+
+  .input_video video {
+    max-width: 100%;
+    height: 350px;
+    margin-bottom: 20px;
+  }
+
+  .output_canvas {
+    max-width: 100%;
+    height: 350px;
+  }
+
+  .toggle-btn,
+  .upload-input {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .container {
+    padding: 10px;
+    margin-top: 70px;
+  }
+
+  .input_video video {
+    height: 300px;
+    margin-bottom: 15px;
+  }
+
+  .output_canvas {
+    height: 300px;
+  }
+
+  .toggle-btn,
+  .upload-input {
+    font-size: 12px;
+    padding: 6px 12px;
+    width: auto;
+  }
+
+  .toggle-btn {
+    top: 10px;
+    left: 10px;
+  }
+
+  .upload-input {
+    top: 45px;
+    left: 10px;
+  }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border-width: 4px;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .container {
+    margin-top: 60px;
+  }
+
+  .input_video video {
+    height: 250px;
+  }
+
+  .output_canvas {
+    height: 250px;
   }
 }
