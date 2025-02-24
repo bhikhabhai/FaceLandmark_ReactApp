@@ -38,6 +38,8 @@ Live Demo : (https://bhikhabhai.github.io/FaceLandmark_ReactApp/)
 2. Install dependencies:
 
         npm install
+   
+        npm install @mediapipe/face_mesh device-detector-js
 
 # Running Locally
 
